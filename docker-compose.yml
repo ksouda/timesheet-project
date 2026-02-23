@@ -1,0 +1,31 @@
+services:
+  mysqldb:
+    image: mysql:latest
+    container_name: mysqldb
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_DATABASE: timesheetdb
+    ports:
+      - "3306:3306"
+    volumes:
+      - timesheetvol:/var/lib/mysql
+
+  timesheet:
+    image: timesheet-ksoudamariem-4nids2
+    container_name: timesheet
+    depends_on:
+      - mysqldb
+    restart: "no"
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/timesheetdb?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: pass
+    stdin_open: true
+    tty: true
+
+volumes:
+  timesheetvol:
+
